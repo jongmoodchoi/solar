@@ -1,0 +1,181 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+
+{% block content %}
+<div class="content-page">
+  <h1>History of Solar System Understanding</h1>
+  <p class="subtitle">
+    From mythological sky-gods to precision space missions — how humanity slowly
+    unwrapped the machinery of the solar system.
+  </p>
+
+  <!-- ── Ancient World ──────────────────────────────────────────────── -->
+  <h2>Ancient Astronomy</h2>
+  <p>
+    For most of human history, the Earth was considered the immovable centre of
+    the cosmos. Stars, Sun, Moon and the five visible planets (Mercury, Venus,
+    Mars, Jupiter, Saturn) were thought to revolve around us on crystalline
+    spheres — a picture so intuitive it persisted for nearly two millennia.
+  </p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="year">~3000 BCE</div>
+      <h3>Babylonian records</h3>
+      <p>
+        Babylonian astronomers compiled centuries of positional records on clay
+        tablets. They discovered the 18-year <em>Saros cycle</em> for predicting
+        eclipses and recognised that the wandering stars (planets) followed
+        regular patterns even if they could not explain <em>why</em>.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">~400 BCE</div>
+      <h3>Greek geometric models</h3>
+      <p>
+        Greek thinkers introduced the idea that celestial motion should be
+        explained geometrically. <strong>Eudoxus of Cnidus</strong> (c. 408–355 BCE)
+        proposed nested homocentric spheres to reproduce the apparent motions of
+        the planets. It was elegant, but only approximate.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">~240 BCE</div>
+      <h3>Eratosthenes measures Earth</h3>
+      <p>
+        Using the angle of shadows at noon in two Egyptian cities 800 km apart,
+        Eratosthenes estimated the Earth's circumference to within ~2% of the
+        modern value — the first quantitative measurement of a planetary body.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">~150 CE</div>
+      <h3>Ptolemy's <em>Almagest</em></h3>
+      <p>
+        Claudius Ptolemy codified the geocentric model in his
+        <em>Almagest</em>, introducing <strong>epicycles</strong>,
+        <strong>deferents</strong>, and the <strong>equant</strong> point — a
+        suite of geometric devices that could predict planetary positions to
+        within about 1–2°. This model remained the standard for 1 400 years.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Scientific Revolution ──────────────────────────────────────── -->
+  <h2>The Copernican Revolution</h2>
+  <p>
+    The sixteenth century saw a cascade of discoveries that dismantled the
+    geocentric world-view and replaced it with the heliocentric solar system we
+    know today.
+  </p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="year">1543</div>
+      <h3>Copernicus – <em>De revolutionibus</em></h3>
+      <p>
+        Nicolaus Copernicus published a Sun-centred model with Earth and the
+        other planets orbiting in circular paths. Although his predictions were
+        no more accurate than Ptolemy's, the model was far simpler and naturally
+        explained the retrograde motion of the outer planets.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1609–1619</div>
+      <h3>Kepler's Three Laws</h3>
+      <p>
+        Johannes Kepler, analysing Tycho Brahe's exquisitely precise naked-eye
+        observations, derived three empirical laws:
+      </p>
+      <ol>
+        <li>Planets orbit the Sun in <strong>ellipses</strong> with the Sun at one focus.</li>
+        <li>The line joining a planet to the Sun sweeps equal areas in equal times
+            (<em>law of equal areas</em>).</li>
+        <li>The square of a planet's orbital period is proportional to the cube of
+            its semi-major axis: <em>T² ∝ a³</em>.</li>
+      </ol>
+      <p>
+        These laws replaced the need for epicycles and equants with a single, elegant
+        mathematical description.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1610</div>
+      <h3>Galileo's telescope</h3>
+      <p>
+        Galileo turned a simple Dutch spyglass on the sky and discovered four
+        moons orbiting Jupiter, the phases of Venus (impossible in a strictly
+        geocentric model), and sunspots — all strong evidence against an
+        unchanging, Earth-centred cosmos.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1687</div>
+      <h3>Newton's <em>Principia</em></h3>
+      <p>
+        Isaac Newton showed that a single force — <strong>gravity</strong>,
+        falling off as the inverse square of distance — could explain both
+        falling apples and the motions of the Moon and planets. Kepler's laws
+        became <em>theorems</em> derivable from Newton's equations, and accurate
+        planetary tables could now be computed from first principles.
+      </p>
+    </div>
+  </div>
+
+  <!-- ── Modern Era ─────────────────────────────────────────────────── -->
+  <h2>Modern Understanding</h2>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="year">1781 / 1846 / 1930</div>
+      <h3>New planets discovered</h3>
+      <p>
+        Uranus (Herschel, 1781) was the first planet found by telescope. Neptune
+        (Adams &amp; Le Verrier, 1846) was predicted mathematically from
+        perturbations of Uranus — a triumph of Newtonian mechanics. Pluto
+        (Tombaugh, 1930) was found photographically and re-classified as a
+        dwarf planet in 2006.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1915</div>
+      <h3>General Relativity</h3>
+      <p>
+        Einstein's General Theory of Relativity explained the residual precession
+        of Mercury's orbit (~43 arcseconds per century) that Newtonian gravity
+        could not fully account for. For practical solar-system ephemerides,
+        relativistic corrections are now routinely included.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">1957–present</div>
+      <h3>Space Age</h3>
+      <p>
+        Beginning with Sputnik, spacecraft have visited every planet in the solar
+        system. Radar ranging and laser reflectors have refined the AU to better
+        than 1 metre, and numerical integration of millions of bodies is performed
+        by NASA/JPL's <em>HORIZONS</em> system.
+      </p>
+    </div>
+
+    <div class="timeline-item">
+      <div class="year">Today</div>
+      <h3>Modern ephemerides</h3>
+      <p>
+        The DE440/DE441 ephemeris from JPL integrates the equations of motion for
+        all major solar-system bodies simultaneously, including relativistic
+        effects, tidal interactions, and asteroid perturbations, yielding
+        sub-kilometre accuracy over centuries.
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

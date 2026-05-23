@@ -1,0 +1,321 @@
+/* =====================================================================
+   Solar System Simulation – Global Styles
+   ===================================================================== */
+
+:root {
+  --bg-dark: #0a0e1a;
+  --bg-panel: rgba(10, 20, 40, 0.85);
+  --accent: #4fc3f7;
+  --accent2: #ffb300;
+  --text: #e8eaf6;
+  --text-muted: #90a4ae;
+  --border: rgba(79, 195, 247, 0.25);
+  --radius: 8px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  background: var(--bg-dark);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ── Navigation ──────────────────────────────────────────────────── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: rgba(5, 10, 25, 0.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+}
+
+nav .brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--accent2);
+  text-decoration: none;
+  margin-right: auto;
+  letter-spacing: 0.05em;
+}
+
+nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.35rem 0.8rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+nav a:hover,
+nav a.active {
+  background: var(--border);
+  color: var(--accent);
+}
+
+/* ── Page wrapper ────────────────────────────────────────────────── */
+.page {
+  padding-top: 52px; /* nav height */
+}
+
+/* ── Simulation page ─────────────────────────────────────────────── */
+#canvas-container {
+  position: fixed;
+  top: 52px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#canvas-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Control panel */
+#controls {
+  position: fixed;
+  top: 62px;
+  right: 14px;
+  z-index: 50;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  min-width: 230px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+}
+
+#controls h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+  margin-bottom: 0.7rem;
+}
+
+#controls label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 0.2rem;
+  margin-top: 0.6rem;
+}
+
+#controls input[type="datetime-local"],
+#controls input[type="range"] {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text);
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+}
+
+#controls input[type="datetime-local"]:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+#controls input[type="range"] {
+  padding: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+#controls .btn-row {
+  display: flex;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+#controls button {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: rgba(79, 195, 247, 0.1);
+  color: var(--accent);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#controls button:hover {
+  background: rgba(79, 195, 247, 0.22);
+}
+
+#controls button.active {
+  background: rgba(79, 195, 247, 0.3);
+  border-color: var(--accent);
+}
+
+/* Planet info tooltip */
+#planet-info {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  z-index: 60;
+}
+
+#planet-info.visible {
+  opacity: 1;
+}
+
+/* Speed indicator */
+#speed-label {
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-align: right;
+}
+
+/* ── Content pages (history / math) ─────────────────────────────── */
+.content-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.content-page h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent2);
+  margin-bottom: 0.4rem;
+}
+
+.content-page .subtitle {
+  color: var(--text-muted);
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1rem;
+}
+
+.content-page h2 {
+  font-size: 1.35rem;
+  color: var(--accent);
+  margin-top: 2.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.content-page h3 {
+  font-size: 1.05rem;
+  color: var(--text);
+  margin-top: 1.4rem;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+
+.content-page p {
+  color: var(--text-muted);
+  margin-bottom: 0.8rem;
+}
+
+.content-page ul,
+.content-page ol {
+  margin-left: 1.4rem;
+  margin-bottom: 0.8rem;
+  color: var(--text-muted);
+}
+
+.content-page li {
+  margin-bottom: 0.3rem;
+}
+
+.content-page .timeline {
+  border-left: 2px solid var(--border);
+  padding-left: 1.4rem;
+  margin-top: 1rem;
+}
+
+.content-page .timeline-item {
+  position: relative;
+  margin-bottom: 1.6rem;
+}
+
+.content-page .timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -1.65rem;
+  top: 0.45rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--bg-dark);
+}
+
+.content-page .timeline-item .year {
+  font-size: 0.8rem;
+  color: var(--accent2);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.2rem;
+}
+
+/* Math blocks */
+.math-block {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  font-family: "Courier New", monospace;
+  font-size: 0.9rem;
+  color: var(--accent);
+  overflow-x: auto;
+}
+
+.math-block .comment {
+  color: var(--text-muted);
+}
+
+.note-box {
+  background: rgba(79, 195, 247, 0.07);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.7rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  #controls {
+    right: 8px;
+    top: 60px;
+    min-width: 200px;
+  }
+  .content-page {
+    padding: 1.2rem 1rem 3rem;
+  }
+}

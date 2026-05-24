@@ -222,25 +222,6 @@ controls.dampingFactor = 0.07;
 controls.minDistance = 20;
 controls.maxDistance = 8000;
 
-// Starfield
-(function addStars() {
-  const positions = [];
-  for (let i = 0; i < 8000; i++) {
-    const r = 15000 + Math.random() * 5000;
-    const theta = Math.random() * Math.PI * 2;
-    const phi = Math.acos(2 * Math.random() - 1);
-    positions.push(
-      r * Math.sin(phi) * Math.cos(theta),
-      r * Math.sin(phi) * Math.sin(theta),
-      r * Math.cos(phi)
-    );
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  const mat = new THREE.PointsMaterial({ color: 0xffffff, size: 2.5, sizeAttenuation: false });
-  scene.add(new THREE.Points(geo, mat));
-})();
-
 // Sun
 const sunGeo = new THREE.SphereGeometry(8, 32, 32);
 const sunMat = new THREE.MeshBasicMaterial({ color: 0xffdd44 });

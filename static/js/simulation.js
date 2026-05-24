@@ -202,10 +202,11 @@ const container = document.getElementById("canvas-container");
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(container.clientWidth, container.clientHeight);
+renderer.setClearColor(0x000000, 1);
 container.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000005);
+scene.background = new THREE.Color(0x000000);
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -246,29 +247,39 @@ scene.add(sunLight);
 
 const planetMeshes = {};
 const orbitLines = {};
-const labelSprites = {};
+const labelElements = {};
+
+const planetDisplayRadii = {};
+
+function makeCircleTexture(size = 128) {
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+
+  const r = size / 2;
+  ctx.clearRect(0, 0, size, size);
+  ctx.beginPath();
+  ctx.arc(r, r, r * 0.48, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+const circleTex = makeCircleTexture(128);
 
 PLANETS.forEach((p) => {
-  // Sphere
-  const geo = new THREE.SphereGeometry(p.radius, 24, 24);
-  const mat = new THREE.MeshPhongMaterial({ color: p.color, shininess: 40 });
-  const mesh = new THREE.Mesh(geo, mat);
+  // Planet marker (simple circle)
+  const displayRadius = Math.max(p.radius, 4);
+  planetDisplayRadii[p.name] = displayRadius;
+
+  const mat = new THREE.SpriteMaterial({ map: circleTex, color: p.color, transparent: true });
+  const mesh = new THREE.Sprite(mat);
+  mesh.scale.set(displayRadius * 2, displayRadius * 2, 1);
   scene.add(mesh);
   planetMeshes[p.name] = mesh;
-
-  // Saturn rings
-  if (p.hasRings) {
-    const ringGeo = new THREE.RingGeometry(p.radius * 1.6, p.radius * 2.8, 64);
-    const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xd4c47a,
-      side: THREE.DoubleSide,
-      transparent: true,
-      opacity: 0.6,
-    });
-    const ring = new THREE.Mesh(ringGeo, ringMat);
-    ring.rotation.x = Math.PI / 2.5;
-    mesh.add(ring);
-  }
 
   // Orbit path (360 points, computed at current date later)
   const orbitPoints = new Array(361).fill(null).map(() => new THREE.Vector3());
@@ -282,21 +293,15 @@ PLANETS.forEach((p) => {
   scene.add(orbitLine);
   orbitLines[p.name] = { line: orbitLine, geo: orbitGeo };
 
-  // Label (canvas texture)
-  const canvas = document.createElement("canvas");
-  canvas.width = 256;
-  canvas.height = 64;
-  const ctx = canvas.getContext("2d");
-  ctx.font = "bold 28px sans-serif";
-  ctx.fillStyle = "#ffffff";
-  ctx.textAlign = "center";
-  ctx.fillText(p.name, 128, 40);
-  const tex = new THREE.CanvasTexture(canvas);
-  const spriteMat = new THREE.SpriteMaterial({ map: tex, transparent: true, opacity: 0.85 });
-  const sprite = new THREE.Sprite(spriteMat);
-  sprite.scale.set(30, 7.5, 1);
-  scene.add(sprite);
-  labelSprites[p.name] = sprite;
+  // Label (HTML overlay)
+  const labelsLayer = document.getElementById("labels-layer");
+  if (labelsLayer) {
+    const el = document.createElement("div");
+    el.className = "planet-label";
+    el.textContent = p.name;
+    labelsLayer.appendChild(el);
+    labelElements[p.name] = el;
+  }
 });
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -348,7 +353,9 @@ btnPlay.addEventListener("click", () => {
 
 btnLabels.addEventListener("click", () => {
   labelsVisible = !labelsVisible;
-  Object.values(labelSprites).forEach((s) => (s.visible = labelsVisible));
+  Object.values(labelElements).forEach((el) => {
+    el.style.display = labelsVisible ? "block" : "none";
+  });
   btnLabels.classList.toggle("active", !labelsVisible);
 });
 
@@ -395,6 +402,7 @@ renderer.domElement.addEventListener("mousemove", (e) => {
 
 function updateScene() {
   const jd = dateToJD(simulationDate);
+  const rect = renderer.domElement.getBoundingClientRect();
 
   PLANETS.forEach((p) => {
     // Planet position
@@ -403,7 +411,29 @@ function updateScene() {
     const py = pos.z * AU; // ecliptic z → Three.js y (up)
     const pz = pos.y * AU;
     planetMeshes[p.name].position.set(px, py, pz);
-    labelSprites[p.name].position.set(px, py + p.radius + 8, pz);
+
+    // Update HTML label position (screen space)
+    const el = labelElements[p.name];
+    if (el) {
+      if (!labelsVisible) {
+        el.style.display = "none";
+      } else {
+        const v = new THREE.Vector3(px, py, pz);
+        v.project(camera);
+
+        const onScreen = v.z >= -1 && v.z <= 1 && v.x >= -1 && v.x <= 1 && v.y >= -1 && v.y <= 1;
+        if (!onScreen) {
+          el.style.display = "none";
+        } else {
+          const x = (v.x * 0.5 + 0.5) * rect.width;
+          const y = (-v.y * 0.5 + 0.5) * rect.height;
+          const yOffset = planetDisplayRadii[p.name] + 10;
+          el.style.display = "block";
+          el.style.left = `${x}px`;
+          el.style.top = `${y - yOffset}px`;
+        }
+      }
+    }
 
     // Orbit path (sample full orbit)
     const { line, geo } = orbitLines[p.name];

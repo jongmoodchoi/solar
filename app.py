@@ -4,7 +4,34 @@ import os
 
 from flask import Flask, render_template
 
-app = Flask(__name__)
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))
+app = Flask(
+    __name__,
+    root_path=APP_ROOT,
+    template_folder="templates",
+    static_folder="static",
+)
+
+
+@app.context_processor
+def inject_static_version():
+    override = os.environ.get("STATIC_VERSION")
+    if override:
+        return {"static_version": override}
+
+    def mtime(rel_path: str) -> int:
+        try:
+            p = os.path.join(app.root_path, rel_path)
+            return int(os.path.getmtime(p))
+        except OSError:
+            return 0
+
+    # Bump whenever key static assets change.
+    v = max(
+        mtime(os.path.join("static", "css", "style.css")),
+        mtime(os.path.join("static", "js", "simulation.js")),
+    )
+    return {"static_version": str(v)}
 
 
 @app.route("/")

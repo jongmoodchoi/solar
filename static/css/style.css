@@ -3,7 +3,7 @@
    ===================================================================== */
 
 :root {
-  --bg-dark: #0a0e1a;
+  --bg-dark: #000000;
   --bg-panel: rgba(10, 20, 40, 0.85);
   --accent: #4fc3f7;
   --accent2: #ffb300;
@@ -39,7 +39,7 @@ nav {
   align-items: center;
   gap: 0.5rem;
   padding: 0.6rem 1.2rem;
-  background: rgba(5, 10, 25, 0.92);
+  background: rgba(0, 0, 0, 0.92);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(8px);
 }
@@ -80,12 +80,35 @@ nav a.active {
   left: 0;
   right: 0;
   bottom: 0;
+  background: #000;
 }
 
 #canvas-container canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+  background: #000;
+}
+
+/* Labels overlay (HTML) */
+#labels-layer {
+  position: fixed;
+  top: 52px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.planet-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  user-select: none;
 }
 
 /* Control panel */

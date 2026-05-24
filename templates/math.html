@@ -5,92 +5,91 @@
 <div class="content-page">
   <h1>Mathematics &amp; Computation</h1>
   <p class="subtitle">
-    How planetary positions are calculated from orbital elements and Kepler's
-    equations — the same approach used in this simulation.
+    This page explains (in student-friendly terms) how the simulation computes
+    planet positions using <strong>Orbital Elements</strong> and Kepler's laws.
   </p>
 
   <!-- ── Orbital Elements ───────────────────────────────────────────── -->
   <h2>1. Orbital Elements</h2>
   <p>
-    Any elliptical orbit around the Sun is fully described by six
-    <strong>Keplerian orbital elements</strong>:
+    Most planets move around the Sun on an ellipse (an oval shape).
+    <strong>Keplerian orbital elements</strong> (Orbital Elements) are 6 numbers
+    that describe the size, shape, tilt, and direction of that ellipse:
   </p>
   <ul>
     <li><strong>a</strong> — Semi-major axis (AU): half the longest diameter of the ellipse.</li>
     <li><strong>e</strong> — Eccentricity (0 = circle, &lt;1 = ellipse): how elongated the orbit is.</li>
     <li><strong>I</strong> — Inclination (°): tilt of the orbital plane relative to the ecliptic.</li>
-    <li><strong>Ω</strong> (Omega) — Longitude of the ascending node (°): where the orbit crosses the ecliptic going north.</li>
-    <li><strong>ω̄</strong> (wBar) — Longitude of perihelion (°): direction of the closest approach to the Sun.</li>
-    <li><strong>L₀</strong> — Mean longitude at epoch (°): where the planet was at the reference time J2000.0.</li>
+    <li><strong>Omega</strong> — Longitude of the ascending node (°): where the orbit crosses the ecliptic going north.</li>
+    <li><strong>wBar</strong> — Longitude of perihelion (°): direction of the closest approach to the Sun.</li>
+    <li><strong>L0</strong> — Mean longitude at epoch (°): where the planet was at the reference time J2000.0.</li>
   </ul>
   <p>
-    These elements change slowly over time due to gravitational interactions
-    between the planets (perturbations). The simulation uses first-order linear
-    rates (<em>e.g.</em> <code>e = e₀ + ė·T</code>, where T is Julian centuries
-    since J2000.0) derived from Table 1 of Simon <em>et al.</em> (1994) /
-    Meeus (1998).
+    These values change slowly over time because planets pull on each other.
+    This simulation uses a simple linear approximation for that slow change.
   </p>
 
   <!-- ── Julian Date ────────────────────────────────────────────────── -->
   <h2>2. Julian Date</h2>
   <p>
-    Astronomical time is measured in <strong>Julian Days (JD)</strong> — a
-    continuous day count starting from noon on 1 January 4713 BCE. J2000.0 is
-    noon on 1 January 2000, which equals JD 2 451 545.0.
+    In astronomy, time is often written as a single day counter called
+    <strong>Julian Date (JD)</strong>. A common reference time is J2000.0
+    (noon on 2000-01-01), which equals JD 2451545.0.
   </p>
   <div class="math-block">
-T = (JD − 2 451 545.0) / 36 525  <span class="comment"># Julian centuries from J2000.0</span>
+T = (JD - 2451545.0) / 36525  <span class="comment"># Julian centuries from J2000.0</span>
   </div>
   <p>
     A JavaScript <code>Date</code> object stores milliseconds from the Unix
     epoch (1 Jan 1970 00:00 UTC), so the conversion to JD is:
   </p>
   <div class="math-block">
-JD = date.getTime() / 86 400 000 + 2 440 587.5
+JD = date.getTime() / 86400000 + 2440587.5
   </div>
 
   <!-- ── Mean Anomaly ───────────────────────────────────────────────── -->
   <h2>3. Mean Anomaly</h2>
   <p>
-    If a planet moved at constant speed around the full orbit, its angular
-    position would be the <strong>mean longitude</strong> L:
+    If a planet moved around its orbit at a constant speed, its angle would be
+    the <strong>mean longitude</strong> L:
   </p>
   <div class="math-block">
-L = L₀ + n·T          <span class="comment"># n = mean angular speed (degrees per Julian century)</span>
+L = L0 + n*T          <span class="comment"># n = mean angular speed (degrees per Julian century)</span>
   </div>
   <p>
-    Subtracting the longitude of perihelion gives the <strong>mean anomaly M</strong>:
+    If we subtract the direction of perihelion (wBar), we get the
+    <strong>mean anomaly</strong> M:
   </p>
   <div class="math-block">
-M = L − ω̄
+M = L - wBar
   </div>
   <p>
-    M is the angle the planet would occupy if it travelled at a constant (mean)
-    angular speed. Because planets speed up near perihelion (Kepler's second law),
-    the real angle — the <em>true anomaly</em> ν — differs from M.
+    Real planets move faster when they are closer to the Sun (Kepler's second law).
+    So the real angle is different from M. That real angle is called the
+    <em>true anomaly</em> (here we write it as <strong>nu</strong>).
   </p>
 
   <!-- ── Kepler's Equation ──────────────────────────────────────────── -->
   <h2>4. Kepler's Equation</h2>
   <p>
-    The link between mean and true anomaly passes through the
-    <strong>eccentric anomaly E</strong>, defined geometrically on the
-    circumscribed circle of the ellipse. Kepler's equation is:
+    To go from M to nu, we first solve for the <strong>eccentric anomaly</strong> E.
+    (It is another angle that is easier to compute.) Kepler's equation is:
   </p>
   <div class="math-block">
-M = E − e · sin(E)
+M = E - e*sin(E)
   </div>
   <p>
-    This is a transcendental equation — it cannot be rearranged to give E
-    directly. We solve it <em>numerically</em> using Newton-Raphson iteration:
+    We cannot solve this equation for E in one step, so we use
+    <em>repeated steps</em> (numerical iteration). This simulation uses the
+    Newton-Raphson method:
   </p>
   <div class="math-block">
 <span class="comment"># Start with a good first guess:</span>
-E₀ = M + e·sin(M)·(1 + e·cos(M))
+E0 = M + e*sin(M)*(1 + e*cos(M))
 
-<span class="comment"># Newton-Raphson step (repeat until |ΔE| &lt; 10⁻¹⁰):</span>
-ΔE = (M − E + e·sin(E)) / (1 − e·cos(E))
-E  = E + ΔE
+<span class="comment"># Newton-Raphson step (repeat until |dE| &lt; 1e-10):</span>
+dE = (M - E + e*sin(E)) / (1 - e*cos(E))
+E  = E + dE
   </div>
   <p>
     For solar-system planet eccentricities (e &lt; 0.21 for Mercury, ≤ 0.09 for
@@ -100,15 +99,15 @@ E  = E + ΔE
   <!-- ── True Anomaly ───────────────────────────────────────────────── -->
   <h2>5. True Anomaly &amp; Heliocentric Distance</h2>
   <p>
-    Once E is known, the <strong>true anomaly ν</strong> and
-    <strong>heliocentric distance r</strong> (AU) follow from:
+    Once we know E, we can compute the <strong>true anomaly (nu)</strong> and the
+    <strong>heliocentric distance r</strong> (AU):
   </p>
   <div class="math-block">
-ν = 2 · atan2( √(1+e)·sin(E/2),  √(1−e)·cos(E/2) )
+nu = 2*atan2( sqrt(1+e)*sin(E/2),  sqrt(1-e)*cos(E/2) )
 
-r = a · (1 − e·cos(E))
+r = a*(1 - e*cos(E))
   </div>
-  <p>The factor 2·atan2 produces ν in the correct quadrant automatically.</p>
+  <p><code>atan2</code> helps keep nu in the correct direction (quadrant).</p>
 
   <!-- ── 3D Coordinates ─────────────────────────────────────────────── -->
   <h2>6. Heliocentric Ecliptic Coordinates</h2>
@@ -116,26 +115,26 @@ r = a · (1 − e·cos(E))
     The planet's position in its own orbital plane is:
   </p>
   <div class="math-block">
-x' = r · cos(ν)
-y' = r · sin(ν)
+x' = r*cos(nu)
+y' = r*sin(nu)
   </div>
   <p>
     Three successive rotations transform these to the
     <strong>heliocentric ecliptic frame</strong> (J2000.0):
   </p>
   <ul>
-    <li>Rotate by ω (argument of perihelion = ω̄ − Ω) about the z-axis.</li>
+    <li>Rotate by omega (argument of perihelion = wBar - Omega) about the z-axis.</li>
     <li>Rotate by I (inclination) about the x-axis.</li>
-    <li>Rotate by Ω (longitude of ascending node) about the z-axis.</li>
+    <li>Rotate by Omega (longitude of ascending node) about the z-axis.</li>
   </ul>
   <div class="math-block">
-x = (cos Ω cos ω − sin Ω sin ω cos I) x'
-  + (−cos Ω sin ω − sin Ω cos ω cos I) y'
+x = (cos(Omega)*cos(omega) - sin(Omega)*sin(omega)*cos(I)) * x'
+  + (-cos(Omega)*sin(omega) - sin(Omega)*cos(omega)*cos(I)) * y'
 
-y = (sin Ω cos ω + cos Ω sin ω cos I) x'
-  + (−sin Ω sin ω + cos Ω cos ω cos I) y'
+y = (sin(Omega)*cos(omega) + cos(Omega)*sin(omega)*cos(I)) * x'
+  + (-sin(Omega)*sin(omega) + cos(Omega)*cos(omega)*cos(I)) * y'
 
-z = (sin ω sin I) x' + (cos ω sin I) y'
+z = (sin(omega)*sin(I)) * x' + (cos(omega)*sin(I)) * y'
   </div>
   <p>
     The resulting (x, y, z) are in AU with the Sun at the origin, x pointing
@@ -145,11 +144,11 @@ z = (sin ω sin I) x' + (cos ω sin I) y'
   <!-- ── Orbit Path ─────────────────────────────────────────────────── -->
   <h2>7. Drawing the Orbit Path</h2>
   <p>
-    The full orbit ellipse is drawn by sweeping ν from 0° to 360° in 360 steps.
-    For each sample angle ν, the distance from the Sun is the ellipse formula:
+    To draw the orbit line, we sample nu from 0 to 360 degrees and compute a
+    point each time. For each nu, the distance from the Sun is:
   </p>
   <div class="math-block">
-r(ν) = a(1 − e²) / (1 + e·cos(ν))    <span class="comment"># conic section (focus-directrix)</span>
+r(nu) = a*(1 - e*e) / (1 + e*cos(nu))    <span class="comment"># conic section (focus-directrix)</span>
   </div>
   <p>
     Applying the same rotation matrices as above gives 360 points that are fed
@@ -160,7 +159,7 @@ r(ν) = a(1 − e²) / (1 + e·cos(ν))    <span class="comment"># conic section
   <h2>8. Accuracy &amp; Limitations</h2>
   <div class="note-box">
     The first-order secular elements used here are accurate to roughly
-    <strong>1–2 arcminutes</strong> over the range 1800–2050 CE.
+    <strong>1-2 arcminutes</strong> over the range 1800-2050.
     For sub-arcsecond precision (e.g., spacecraft navigation), higher-order
     series expansions (VSOP87) or full numerical integration (DE440) are
     required.
@@ -178,11 +177,11 @@ r(ν) = a(1 − e²) / (1 + e·cos(ν))    <span class="comment"># conic section
   <h2>9. Step-by-Step Algorithm Summary</h2>
   <ol>
     <li>Convert the chosen date to Julian Date (JD).</li>
-    <li>Compute T = (JD − 2 451 545) / 36 525.</li>
+    <li>Compute T = (JD - 2451545) / 36525.</li>
     <li>Evaluate all six orbital elements at time T.</li>
-    <li>Compute mean anomaly M = L − ω̄.</li>
+    <li>Compute mean anomaly M = L - wBar.</li>
     <li>Solve Kepler's equation for eccentric anomaly E (Newton-Raphson).</li>
-    <li>Compute true anomaly ν and distance r.</li>
+    <li>Compute true anomaly nu and distance r.</li>
     <li>Rotate to heliocentric ecliptic (x, y, z) in AU.</li>
     <li>Scale to screen coordinates and render in Three.js.</li>
   </ol>

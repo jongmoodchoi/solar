@@ -5,6 +5,9 @@
 <!-- 3D canvas -->
 <div id="canvas-container"></div>
 
+<!-- Labels overlay (HTML) -->
+<div id="labels-layer" aria-hidden="true"></div>
+
 <!-- Control panel -->
 <div id="controls">
   <h3>Controls</h3>
@@ -42,5 +45,5 @@
   }
 }
 </script>
-<script type="module" src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/simulation.js', v=static_version) }}"></script>
 {% endblock %}
